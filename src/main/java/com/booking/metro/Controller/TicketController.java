@@ -10,7 +10,7 @@ import com.booking.metro.Services.TicketService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tickets")
+@RequestMapping("/tickets")
 public class TicketController {
 
  @Autowired

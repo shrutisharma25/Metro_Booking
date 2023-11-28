@@ -1,31 +1,22 @@
 package com.booking.metro.Controller;
 
-//StationController.java
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.booking.metro.Entity.Station;
-import com.booking.metro.Services.StationService;
-
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/stations")
+@RequestMapping("/stations")
 public class StationController {
 
- @Autowired
- private StationService stationService;
+    private final String apiUrl = "https://shrutisharma25.github.io/Table__API/stations.json";
 
- @GetMapping("/initialize")
- public String initializeStations() {
-     stationService.initializeStationsFromJson();
-     return "Stations initialized successfully";
- }
-
- @GetMapping
- public List<Station> getAllStations() {
-     return stationService.getAllStations();
- }
+    @GetMapping("/initialize")
+    public Station[] getStations() {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForObject(apiUrl, Station[].class);
+    }
 }
+
