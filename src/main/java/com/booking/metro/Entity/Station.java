@@ -1,32 +1,27 @@
 package com.booking.metro.Entity;
-
+//Station.java
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Document(collection = "stations")
-@Getter
-@Setter
 public class Station {
-    @Id
-    private String id;
+ @Id
+ private String id;
 
-    private String name;
-    private double ticketPrice;
-    
-    
-	public Station() {
-		super();
-	}
+ private String name;
+ private boolean startStation;
+ private boolean lastStation;
+ private int price;
 
-	public void setTicketPrice(double ticketPrice2) {
-		
-	}
-	public int getTicketPrice() {
-		return 0;
-	}
-    
-    
+ // Getters and setters (omitted for brevity)
+
+ public Station() {
+ }
+
+ public Station(String name, boolean startStation, boolean lastStation, int price) {
+     this.name = name;
+     this.startStation = startStation;
+     this.lastStation = lastStation;
+     this.price = price;
+ }
 }

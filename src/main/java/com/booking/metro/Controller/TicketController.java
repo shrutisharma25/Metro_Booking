@@ -1,38 +1,48 @@
 package com.booking.metro.Controller;
 
+//TicketController.java
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.booking.metro.Entity.Ticket;
 import com.booking.metro.Services.TicketService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
 public class TicketController {
 
-    @Autowired
-    private TicketService ticketService;
+ @Autowired
+ private TicketService ticketService;
 
-    @PostMapping("/generate")
-    public ResponseEntity<Ticket> generateTicket(@RequestParam String startStation, @RequestParam String endStation) {
-        Ticket generatedTicket = ticketService.generateTicket(startStation, endStation);
-        return new ResponseEntity<>(generatedTicket, HttpStatus.OK);
-    }
+ @PostMapping("/buy")
+ public String buyTicket(@RequestParam String startStation, @RequestParam String endStation) {
+     return ticketService.buyTicket(startStation, endStation);
+ }
 
-    @PostMapping("/use")
-    public ResponseEntity<String> useTicket(@RequestParam Long ticketId, @RequestParam String station, @RequestParam boolean entering) {
-        boolean isUsed = ticketService.useTicket(ticketId, station, entering);
+ @PostMapping("/enter")
+ public String enterStation(@RequestParam String ticketId) {
+     if (ticketService.enterStation(ticketId)) {
+         return "Entered the station successfully";
+     } else {
+         return "Failed to enter the station";
+     }
+ }
 
-        if (isUsed) {
-            return new ResponseEntity<>("Ticket used successfully", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Invalid ticket or usage limit reached", HttpStatus.BAD_REQUEST);
-        }
-    }
+ @PostMapping("/exit")
+ public String exitStation(@RequestParam String ticketId) {
+     if (ticketService.exitStation(ticketId)) {
+         return "Exited the station successfully";
+     } else {
+         return "Failed to exit the station";
+     }
+ }
+
+ @GetMapping("/all")
+ public List<Ticket> getAllTickets() {
+     return ticketService.getAllTickets();
+ }
 }
+
 

@@ -1,59 +1,68 @@
 package com.booking.metro.Entity;
-
-import java.time.LocalDateTime;
-
+//Ticket.java
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Document(collection = "tickets")
-@Getter
-@Setter
 public class Ticket {
-    @Id
-    private String id;
+ @Id
+ private String id;
 
-    private String startStation;
-    private String endStation;
-    private LocalDateTime generatedTime;
-    private int usageCount;
-    
-	public Ticket() {
-		super();
-	}
+ private String ticketId;
+ private String startStation;
+ private String endStation;
+ private LocalDateTime purchaseTime;
+ private int usesRemaining;
 
-	public void setStartStation(String startStation2) {
-		
-	}
+ // No need for User association
 
-	public void setEndStation(String endStation2) {
-		
-	}
+ public String getId() {
+     return id;
+ }
 
-	public void setGeneratedTime(LocalDateTime now) {
-		
-	}
+ public void setId(String id) {
+     this.id = id;
+ }
 
-	public void setUsageCount(int i) {
-		
-	}
+ public String getTicketId() {
+     return ticketId;
+ }
 
-	public Object getStartStation() {
-		return null;
-	}
+ public void setTicketId(String ticketId) {
+     this.ticketId = ticketId;
+ }
 
-	public Object getEndStation() {
-		return null;
-	}
+ public String getStartStation() {
+     return startStation;
+ }
 
-	public int getUsageCount() {
-		return 0;
-	}
+ public void setStartStation(String startStation) {
+     this.startStation = startStation;
+ }
 
-	public LocalDateTime getGeneratedTime() {
-		return null;
-	}
-    
+ public String getEndStation() {
+     return endStation;
+ }
+
+ public void setEndStation(String endStation) {
+     this.endStation = endStation;
+ }
+
+ public LocalDateTime getPurchaseTime() {
+     return purchaseTime;
+ }
+
+ public void setPurchaseTime(LocalDateTime purchaseTime) {
+     this.purchaseTime = purchaseTime;
+ }
+
+ public int getUsesRemaining() {
+     return usesRemaining;
+ }
+
+ public void setUsesRemaining(int usesRemaining) {
+     this.usesRemaining = usesRemaining;
+ }
 }

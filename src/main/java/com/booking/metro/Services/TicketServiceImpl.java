@@ -1,102 +1,78 @@
-package com.booking.metro.Services;
+package com.booking.metro.Services;// TicketServiceImpl.java
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
+//TicketServiceImpl.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.booking.metro.Entity.Station;
 import com.booking.metro.Entity.Ticket;
-import com.booking.metro.Repository.StationRepository;
 import com.booking.metro.Repository.TicketRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TicketServiceImpl implements TicketService {
 
-    @Autowired
-    private TicketRepository ticketRepository;
+ @Autowired
+ private TicketRepository ticketRepository;
 
-    @Autowired
-    private StationRepository stationRepository;
+ @Override
+ public String buyTicket(String startStation, String endStation) {
+     // Generate a unique ticketId (you can use UUID or any other method)
+     String ticketId = generateUniqueTicketId();
 
-    @Override
-    public Ticket generateTicket(String startStation, String endStation) {
-        
-        Station startStationEntity = stationRepository.findByName(startStation);
-        Station endStationEntity = stationRepository.findByName(endStation);
+     Ticket ticket = new Ticket();
+     ticket.setTicketId(ticketId);
+     ticket.setStartStation(startStation);
+     ticket.setEndStation(endStation);
+     ticket.setPurchaseTime(LocalDateTime.now());
+     ticket.setUsesRemaining(2);
 
-        if (startStationEntity == null || endStationEntity == null) {
-            throw new IllegalArgumentException("Invalid stations");
-        }
+     ticketRepository.save(ticket);
 
-        
-        double ticketPrice = calculateTicketPrice(startStationEntity, endStationEntity);
+     return ticketId;
+ }
 
-        // Create a new ticket entity
-        Ticket ticket = new Ticket();
-        ticket.setStartStation(startStation);
-        ticket.setEndStation(endStation);
-        ticket.setGeneratedTime(LocalDateTime.now());
-        ticket.setUsageCount(0);
+ @Override
+ public boolean enterStation(String ticketId) {
+     List<Ticket> tickets = ticketRepository.findByTicketId(ticketId);
 
-        ticket = ticketRepository.save(ticket);
+     if (tickets.isEmpty()) {
+         return false; // Ticket not found
+     }
 
-        return ticket;
-    }
+     Ticket ticket = tickets.get(0);
 
-    @Override
-    public boolean useTicket(Long ticketId, String station, boolean entering) {
-       
-        Optional<Ticket> optionalTicket = ticketRepository.findById(ticketId);
+     if (ticket.getUsesRemaining() > 0) {
+         ticket.setUsesRemaining(ticket.getUsesRemaining() - 1);
+         ticketRepository.save(ticket);
+         return true; // Successfully entered the station
+     }
 
-        if (optionalTicket.isPresent()) {
-            Ticket ticket = optionalTicket.get();
+     return false; // No uses remaining
+ }
 
-            if (isTicketExpired(ticket)) {
-                throw new IllegalStateException("Ticket has expired");
-            }
+ @Override
+ public boolean exitStation(String ticketId) {
+     List<Ticket> tickets = ticketRepository.findByTicketId(ticketId);
 
-            if (ticket.getUsageCount() >= 2) {
-                throw new IllegalStateException("Ticket has reached its usage limit");
-            }
+     if (tickets.isEmpty()) {
+         return false; // Ticket not found
+     }
 
-            if ((entering && !ticket.getStartStation().equals(station)) ||
-                (!entering && !ticket.getEndStation().equals(station))) {
-                throw new IllegalStateException("Invalid station for ticket usage");
-            }
+     // Assuming exiting a station does not affect usesRemaining
 
-            ticket.setUsageCount(ticket.getUsageCount() + 1);
-            ticketRepository.save(ticket);
+     return true; // Successfully exited the station
+ }
 
-            return true;
-        }
+ @Override
+ public List<Ticket> getAllTickets() {
+     return ticketRepository.findAll();
+ }
 
-        return false;
-    }
-
-    private double calculateTicketPrice(Station startStation, Station endStation) {
-
-        if (startStation == null || endStation == null) {
-            throw new IllegalArgumentException("Invalid start or end station");
-        }
-
-        double ticketPrice = Math.abs(endStation.getTicketPrice() - startStation.getTicketPrice());
-
-        return ticketPrice;
-    }
-
-
-    private boolean isTicketExpired(Ticket ticket) {
-        
-        if (ticket == null) {
-            throw new IllegalArgumentException("Invalid ticket");
-        }
-
-        LocalDateTime expiryTime = ticket.getGeneratedTime().plusHours(18);
-
-        return LocalDateTime.now().isAfter(expiryTime);
-    }
-
+ private String generateUniqueTicketId() {
+     // Implement your logic to generate a unique ticketId
+     // This can be a UUID or any other method
+     return "TICKET_" + LocalDateTime.now().toString();
+ }
 }
-

@@ -1,0 +1,22 @@
+{
+  "stations": [
+    {
+      "name": "A",
+      "startStation": true,
+      "price": 0
+    },
+    {
+      "name": "B",
+      "price": 5
+    },
+    {
+      "name": "C",
+      "price": 15
+    },
+    {
+      "name": "D",
+      "lastStation": true,
+      "price": 50
+    }
+  ]
+}
